@@ -1,9 +1,13 @@
 # ecommerce-apiassignment
 Api Assignment Hybr1d
 
+Please do run "npm install" or "npm i" for installing the dependencies.
+
 Please paste the db credentials shared in the mail on .env file to connect. Db used is Postgres, the table schema is given in v1.sql file for referrence.
 
 Free tier postgres db with size of 20 mb and 4 simultaneous connections is used.
+
+for running the api, do run "npm start"
 
 The api routes are same as the ones given in the document, However giving sample request urls and request body for api,
 
@@ -44,6 +48,10 @@ The api routes are same as the ones given in the document, However giving sample
 /register and /login api gives a jwt token in response, which must be used for all other api for authorization.
 
 for req body schema, Please refer to the Joi schema thats present in the schema.js.
+
+Used Express status monitoring for api monitoring and for logging, morgan is used, files can be found inside logs folder.
+
+For monitoring, visit http://localhost:3200/status in chrome.
 
 done by rajkumar.r3a@gmail.com
 
