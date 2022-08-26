@@ -16,6 +16,7 @@ const CronJob = require('cron').CronJob;
 const v1 = require('./router/v1/router');
 const validator = require('express-joi-validation').createValidator({});
 const schema = require('./schema');
+var jwt = require('jsonwebtoken');
 
 let ipBlock={};  //used for storing IP's that reaches rate limit often and this will be reset once in a day
 
@@ -84,9 +85,11 @@ var accessLogStream = rfs.createStream('access.log', {
 // setting up logger with custom format to log all req and response just before sending response.
 app.use(morgan(':date[iso] :method :url :referrer :remote-addr :remote-user :req[header] :response-time[digits] :status', { stream: accessLogStream }));
 
+
+let ignoreRoutes=['/', '/register', '/login'];
 app.use((req,res,next) => {
     // console.log(req.url)
-    let ignoreRoutes=['/', '/register']
+    
     if(!ignoreRoutes.includes(req.url)){
          validator.headers(schema.auth)(req,res,next); //for validating auth headers of request
     }
@@ -94,7 +97,22 @@ app.use((req,res,next) => {
         next()
     }
     
+});
+
+app.use((req,res,next) => {
+    if(!ignoreRoutes.includes(req.url)){
+       //for validating the auth token
+       jwt.verify(req.headers.authorization.split(' ')[1], process.env.JWT_SECRET, function(err, decoded) {
+        if(err) return res.status(401).send('unauthorized');
+        next();
+      });
+   }
+   else{
+       next()
+   }
 })
+
+
 
 
 app.use('/api', v1.router); //using v1 router for v1 routes
